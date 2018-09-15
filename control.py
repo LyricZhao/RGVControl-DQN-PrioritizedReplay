@@ -1,9 +1,9 @@
-# for step 1
 import random
 
+# for step 1
 class rgv_system_step_1:
 
-    def __init__(self, m1, m2, m3, cw, dt, ut, wt, break_cond):
+    def __init__(self, m1, m2, m3, cw, c1, c2, dt, ut, wt, break_cond, cnc_set):
         self.move_time = [0, m1, m2, m3]
         self.cnc_work_time = cw
         self.ud_cnc_time = [dt, ut, dt, ut, dt, ut, dt, ut]
@@ -16,14 +16,7 @@ class rgv_system_step_1:
         self.done_time = []
         self.max_learning_time = 3600 # 1 hours
         self.max_working_time = 8 * 60 * 60 # 8 hours
-
-        '''
-        print 'move_time = ', self.move_time
-        print 'cnc_work_time = ', self.cnc_work_time
-        print 'ud_cnc_time = ', self.ud_cnc_time
-        print 'washing time = ', self.washing_time
-        print 'break = ', break_cond
-        '''
+        self.broken_ones = [False for i in range(0, 8)]
 
     def whether_done(self):
         return self.cur_time > self.max_working_time
@@ -42,11 +35,9 @@ class rgv_system_step_1:
 
     def working_ratio(self):
         done_counter = 0
-        min_time = 0
         for i in range(len(self.done_time) - 1, -1, -1):
             if self.cur_time - self.done_time[i] < self.max_learning_time:
                 done_counter += 1
-                min_time = self.done_time[i]
             else:
                 break
         return done_counter
@@ -84,14 +75,77 @@ class rgv_system_step_1:
         self.time_passing(self.ud_cnc_time[cnc_id])
 
         # break
+        this_one_break = False
         if self.has_break and random.randint(1, 100) == 1:
-            self.done_tot -= 1
+            this_one_break = True
             self.cnc_remaining_time[cnc_id] = random.randint(1, self.cnc_work_time) + random.randint(10, 20)
         else:
             self.cnc_remaining_time[cnc_id] = self.cnc_work_time
             self.done_time.append(self.cur_time)
 
         # wash and send
-        self.time_passing(self.washing_time)
-        self.done_tot += 1
+        if self.broken_ones[cnc_id] == True:
+            pass
+        else:
+            self.time_passing(self.washing_time)
+            self.done_tot += 1
+        self.broken_ones[cnc_id] = this_one_break
         return useless_step
+
+# for step 2
+class rgv_system_step_2(rgv_system_step_1):
+
+    # 0 for step 1, 1 for step 2
+    def __init__(self, m1, m2, m3, cw, c1, c2, dt, ut, wt, break_cond, cnc_set):
+        rgv_system_step_1.__init__(self, m1, m2, m3, cw, c1, c2, dt, ut, wt, break_cond, cnc_set)
+        self.c1 = c1; self.c2 = c2; self.s2_only = False
+        self.cnc_setting = []
+        for i in range(0, 8):
+            if cnc_set[i] == '1': self.cnc_setting.append(1)
+            else: self.cnc_setting.append(0)
+
+    def take(self, cnc_id):
+        if self.s2_only == True and self.cnc_setting[cnc_id] == 0:
+            return True # useless_step
+        elif self.s2_only == False and self.cnc_setting[cnc_id] == 1:
+            return True
+
+        # move and wait
+        self.time_passing(self.move_to(cnc_id / 2))
+        self.time_passing(self.cnc_remaining_time[cnc_id])
+
+        # up
+        self.time_passing(self.ud_cnc_time[cnc_id])
+
+        if self.s2_only:
+            # break
+            this_one_break = False
+            if self.has_break and random.randint(1, 100) == 1:
+                this_one_break = True
+                self.cnc_remaining_time[cnc_id] = random.randint(1, self.c2) + random.randint(10, 20)
+            else:
+                self.cnc_remaining_time[cnc_id] = self.c2
+                self.done_time.append(self.cur_time)
+
+            # wash and send
+            if self.broken_ones[cnc_id] == True:
+                pass
+            else:
+                self.time_passing(self.washing_time)
+                self.done_tot += 1
+            self.broken_ones[cnc_id] = this_one_break
+            self.s2_only = False
+        else:
+            # break
+            this_one_break = False
+            if self.has_break and random.randint(1, 100) == 1:
+                this_one_break = True
+                self.cnc_remaining_time[cnc_id] = random.randint(1, self.c1) + random.randint(10, 20)
+            else:
+                self.cnc_remaining_time[cnc_id] = self.c1
+
+            if self.broken_ones[cnc_id] == True:
+                self.s2_only = False
+            else:
+                self.s2_only = True
+            self.broken_ones[cnc_id] = this_one_break

@@ -7,6 +7,7 @@ import numpy as np
 import math
 
 from control import rgv_system_step_1
+from control import rgv_system_step_2
 
 class RGVEnv:
     # paras = [m1, m2, m3, cw, dt, ut, break] for step 1
@@ -14,6 +15,8 @@ class RGVEnv:
     def __init__(self, paras, rgv_step = 1):
         self.origin_paras = paras
         self.actions = []
+        self.max_steps = 1000
+        self.cur_steps = 0
         if rgv_step == 1:
             self.rgv = rgv_system_step_1(*paras)
         else:
@@ -22,6 +25,9 @@ class RGVEnv:
     # action means moving which one
     # return observation, reward, done
     def step(self, action):
+        self.cur_steps += 1
+        if self.cur_steps > self.max_steps:
+            return np.array(self.rgv.state()), -1, True
         useless_step = self.rgv.take(action)
         self.actions.append(action)
         if useless_step:
@@ -33,6 +39,7 @@ class RGVEnv:
     # return an observation
     def reset(self):
         self.action = []
+        self.cur_steps = 0
         self.rgv.__init__(*self.origin_paras)
         return np.array(self.rgv.state())
 

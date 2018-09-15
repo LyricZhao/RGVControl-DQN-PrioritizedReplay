@@ -9,7 +9,13 @@ from env import RGVEnv
 MEMORY_SIZE = 10000
 
 if __name__ == "__main__":
-    env = RGVEnv([20, 33, 46, 560, 28, 31, 25, False], rgv_step = 1)
+    # env = RGVEnv([20, 33, 46, 560, 400, 378, 28, 31, 25, False, None], rgv_step = 1) # case 1
+    # env = RGVEnv([23, 41, 59, 580, 280, 500, 30, 35, 30, False, None], rgv_step = 1) # case 2
+    # env = RGVEnv([18, 32, 46, 545, 455, 182, 27, 32, 25, False, None], rgv_step = 1) # case 3
+    # env = RGVEnv([20, 33, 46, 560, 400, 378, 28, 31, 25, True , None], rgv_step = 1) # case 1 with break
+    # env = RGVEnv([23, 41, 59, 580, 280, 500, 30, 35, 30, True , None], rgv_step = 1) # case 2 with break
+    # env = RGVEnv([18, 32, 46, 545, 455, 182, 27, 32, 25, True , None], rgv_step = 1) # case 3 with break
+    env = RGVEnv([20, 33, 46, 560, 400, 378, 28, 31, 25, False, '10101010'], rgv_step = 2)
     sess = tf.Session()
     with tf.variable_scope('DQN_with_prioritized_replay'):
         RL = DQNPrioritizedReplay(
@@ -19,7 +25,7 @@ if __name__ == "__main__":
     sess.run(tf.global_variables_initializer())
 
     step = 0
-    for episode in range(5000000):
+    for episode in range(1000):
         # initial observation
         observation = env.reset()
 
