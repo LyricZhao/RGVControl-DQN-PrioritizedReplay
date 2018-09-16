@@ -18,7 +18,7 @@ cases = [
 [18, 32, 46, 545, 455, 182, 27, 32, 25, False]
 ]
 
-rstr = ['10101010', '01010101', '10101110', '10100010', '01011101', '01010001']
+rstr = ['11100011']
 
 def re_test(RL, env, has_break):
     observation = env.reset()
@@ -28,14 +28,15 @@ def re_test(RL, env, has_break):
         observation_, reward, done = env.step(action)
         observation = observation_
         if done:
+            if env.cur_steps >= 1000: return -1
             return env.rgv.global_working_ratio()
     return -1
 
 def run_step_case(case, final_steps, rgvs, cnc_st, cid):
     env = RGVEnv(case + [cnc_st], rgvs)
-    hpc_file = 'output/' + cnc_st + 'nn_case' + str(cid) + '_model_step_' + str(rgvs) + '.csv'
-    max_file_no_break = 'output/' + cnc_st + 'nn_case' + str(cid) + '_best_step_' + str(rgvs) + '_no_break.dt'
-    max_file_with_break = 'output/' + cnc_st + 'nn_case' + str(cid) + '_best_step_' + str(rgvs) + '_with_break.dt'
+    hpc_file = 'output/' + cnc_st + '_case' + str(cid) + '_model_step_' + str(rgvs) + '.csv'
+    max_file_no_break = 'output/' + cnc_st + '_case' + str(cid) + '_best_step_' + str(rgvs) + '_no_break.dt'
+    max_file_with_break = 'output/' + cnc_st + '_case' + str(cid) + '_best_step_' + str(rgvs) + '_with_break.dt'
     hpc_csv = []
     mfnb = []; mfnb_v = 0
     mfwb = []; mfwb_v = 0
@@ -126,9 +127,10 @@ if __name__ == "__main__":
 
     for i in range(0, 3):
         print 'starting to run case #', i
-        for j in rstr:
-            print 'shape:', j
-            run_step_case(cases[i], 300, 2, j, i)
+        for j in range(0, 30):
+            rsv = rand_str()
+            print 'shape:', rsv
+            run_step_case(cases[i], 300, 2, rsv, i)
         print 'case #', i, 'done !!!\n'
 
     print 'all done !!!'
