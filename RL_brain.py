@@ -105,7 +105,7 @@ class Memory(object):  # stored as ( s, a, r, s_ ) in SumTree
             idx, p, data = self.tree.get_leaf(v)
             prob = p / self.tree.total_p
             if min_prob == 0.:
-                ISWeights[i, 0] = 0
+                ISWeights[i, 0] = 0.
             else:
                 ISWeights[i, 0] = np.power(prob/min_prob, -self.beta)
             b_idx[i], b_memory[i, :] = idx, data
@@ -235,7 +235,7 @@ class DQNPrioritizedReplay:
     def learn(self):
         if self.learn_step_counter % self.replace_target_iter == 0:
             self.sess.run(self.replace_target_op)
-            print('\ntarget_params_replaced\n')
+            # print('\ntarget_params_replaced\n')
 
         if self.prioritized:
             tree_idx, batch_memory, ISWeights = self.memory.sample(self.batch_size)
