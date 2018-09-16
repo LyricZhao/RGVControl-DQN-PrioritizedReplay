@@ -17,7 +17,7 @@ class SumTree(object):
         self.capacity = capacity  # for all priority values
         self.tree = np.zeros(2 * capacity - 1)
         # [--------------Parent nodes-------------][-------leaves to recode priority-------]
-        #             size: capacity - 1                       size: capacity
+        #             size: capacity - 1                       size: capacity 
         self.data = np.zeros(capacity, dtype=object)  # for all transitions
         # [--------------data frame-------------]
         #             size: capacity

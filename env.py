@@ -19,7 +19,7 @@ class RGVEnv:
         else:
             self.rgv = rgv_system_step_2(*paras)
 
-    # action means moving which one
+    # action means moving which one 
     # return observation, reward, done
     def step(self, action):
         self.cur_steps += 1

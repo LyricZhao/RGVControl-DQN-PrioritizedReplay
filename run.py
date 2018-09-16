@@ -33,9 +33,9 @@ def re_test(RL, env, has_break):
 
 def run_step_case(case, final_steps, rgvs, cnc_st, cid):
     env = RGVEnv(case + [cnc_st], rgvs)
-    hpc_file = 'output/' + cnc_st + '_case' + str(cid) + '_model_step_' + str(rgvs) + '.csv'
-    max_file_no_break = 'output/' + cnc_st + '_case' + str(cid) + '_best_step_' + str(rgvs) + '_no_break.dt'
-    max_file_with_break = 'output/' + cnc_st + '_case' + str(cid) + '_best_step_' + str(rgvs) + '_with_break.dt'
+    hpc_file = 'output/' + cnc_st + 'nn_case' + str(cid) + '_model_step_' + str(rgvs) + '.csv'
+    max_file_no_break = 'output/' + cnc_st + 'nn_case' + str(cid) + '_best_step_' + str(rgvs) + '_no_break.dt'
+    max_file_with_break = 'output/' + cnc_st + 'nn_case' + str(cid) + '_best_step_' + str(rgvs) + '_with_break.dt'
     hpc_csv = []
     mfnb = []; mfnb_v = 0
     mfwb = []; mfwb_v = 0
@@ -119,12 +119,10 @@ def rand_str():
     return ''.join(arr)
 
 if __name__ == "__main__":
-    '''
     for i in range(0, 3):
         print 'starting to run case #', i
         run_step_case(cases[i], 400, 1, '', i)
         print 'case #', i, 'done !!!\n'
-    '''    
 
     for i in range(0, 3):
         print 'starting to run case #', i
@@ -132,4 +130,5 @@ if __name__ == "__main__":
             print 'shape:', j
             run_step_case(cases[i], 300, 2, j, i)
         print 'case #', i, 'done !!!\n'
+
     print 'all done !!!'

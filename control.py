@@ -124,7 +124,7 @@ class rgv_system_step_2(rgv_system_step_1):
         # up
         rtn_time = self.cur_time
         self.time_passing(self.ud_cnc_time[cnc_id])
-
+ 
         broken_time = 0
         if self.s2_only:
             # break
